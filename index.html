@@ -397,10 +397,15 @@ function renderWorkoutTab(){
   state.workoutDays.forEach(d=>{
     const isDone = state.dayCompleted[d.day];
     const card = el(`<div class="card" style="${isDone?'border:1px solid #22c55e;':''}"></div>`);
-    const header = el(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-      <p style="font-weight:bold;margin:0;">${d.day} — ${d.title}</p>
+    const header = el(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;">
+      <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0;">
+        <span style="font-weight:bold;white-space:nowrap;">${d.day} —</span>
+        <input class="day-title-input" type="text" value="${d.title}" style="flex:1;min-width:0;width:auto;margin-top:0;padding:4px 6px;font-weight:bold;font-size:14px;" />
+      </div>
     </div>`);
-    const delBtn = el(`<button class="btn-danger-ghost">حذف روز</button>`);
+    const titleInput = header.querySelector('.day-title-input');
+    titleInput.onchange = (e)=>{ d.title = e.target.value.trim() || d.title; saveState(); };
+    const delBtn = el(`<button class="btn-danger-ghost" style="flex-shrink:0;">حذف روز</button>`);
     delBtn.onclick = ()=>{ state.workoutDays = state.workoutDays.filter(x=>x.day!==d.day); render(); };
     header.appendChild(delBtn);
     card.appendChild(header);
