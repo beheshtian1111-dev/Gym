@@ -393,11 +393,25 @@ function renderWorkoutTab(){
     <p style="font-size:13px;color:#94a3b8;">${wp}٪ از تمرینات این هفته انجام شده</p>
   </div>`));
 
-  const planSection = el(`<div class="section"><h2>برنامه تمرینی هفتگی</h2></div>`);
+  const planSection = el(`<div class="section"></div>`);
+  const planHeader = el(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <h2 style="margin:0;">برنامه تمرینی هفتگی</h2>
+  </div>`);
+  const collapseAllBtn = el(`<button style="background:none;border:1px solid #334155;border-radius:6px;color:#94a3b8;cursor:pointer;font-size:12px;padding:4px 10px;">بستن همه</button>`);
+  collapseAllBtn.onclick = ()=>{
+    if(!state.collapsedDays) state.collapsedDays = {};
+    const allCollapsed = state.workoutDays.every(d=>state.collapsedDays[d.day]);
+    state.workoutDays.forEach(d=>{ state.collapsedDays[d.day] = !allCollapsed; });
+    render();
+  };
+  planHeader.appendChild(collapseAllBtn);
+  planSection.appendChild(planHeader);
+  if(!state.collapsedDays) state.collapsedDays = {};
   state.workoutDays.forEach(d=>{
     const isDone = state.dayCompleted[d.day];
+    const isCollapsed = !!state.collapsedDays[d.day];
     const card = el(`<div class="card" style="${isDone?'border:1px solid #22c55e;':''}"></div>`);
-    const header = el(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;">
+    const header = el(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:${isCollapsed?'0':'6px'};gap:8px;">
       <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0;">
         <span style="font-weight:bold;white-space:nowrap;">${d.day} —</span>
         <input class="day-title-input" type="text" value="${d.title}" style="flex:1;min-width:0;width:auto;margin-top:0;padding:4px 6px;font-weight:bold;font-size:14px;" />
@@ -405,11 +419,20 @@ function renderWorkoutTab(){
     </div>`);
     const titleInput = header.querySelector('.day-title-input');
     titleInput.onchange = (e)=>{ d.title = e.target.value.trim() || d.title; saveState(); };
+
+    const toggleBtn = el(`<button style="flex-shrink:0;background:none;border:1px solid #334155;border-radius:6px;color:#94a3b8;cursor:pointer;font-size:13px;padding:2px 8px;">${isCollapsed?'▾ باز کردن':'▴ بستن'}</button>`);
+    toggleBtn.onclick = ()=>{
+      state.collapsedDays[d.day] = !isCollapsed;
+      render();
+    };
+    header.appendChild(toggleBtn);
+
     const delBtn = el(`<button class="btn-danger-ghost" style="flex-shrink:0;">حذف روز</button>`);
     delBtn.onclick = ()=>{ state.workoutDays = state.workoutDays.filter(x=>x.day!==d.day); render(); };
     header.appendChild(delBtn);
     card.appendChild(header);
 
+    if(!isCollapsed){
     d.exercises.forEach(ex=>{
       const checked = !!state.checklist[d.day+"-"+ex.name];
       const row = el(`<div class="ex-row ${checked?'checked':''}"></div>`);
@@ -453,6 +476,7 @@ function renderWorkoutTab(){
       }
       card.appendChild(completeBtn);
     }
+    } // end if(!isCollapsed)
     planSection.appendChild(card);
   });
   state.restDays.forEach(d=>{
