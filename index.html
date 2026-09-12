@@ -708,7 +708,9 @@ function renderMusicTab(){
   </div>`));
 
   const uploadCard = el(`<div class="card">
-    <input type="file" id="musicFileInput" accept="audio/*" multiple style="width:100%;color:#94a3b8;"/>
+    <input type="file" id="musicFileInput" accept="audio/*,.mp3,.m4a,.wav,.aac,.ogg,.flac,.wma,.opus,.caf" multiple style="width:100%;color:#94a3b8;"/>
+    <p style="font-size:11px;color:#64748b;margin-top:8px;">اگه فایل صوتیت توی لیست بالا دیده نشد (به‌خاطر فرمت خاص)، از این گزینه استفاده کن:</p>
+    <input type="file" id="musicFileInputAny" accept="*/*" multiple style="width:100%;color:#94a3b8;margin-top:4px;"/>
     <p id="uploadStatus" style="font-size:12px;color:#94a3b8;margin-top:8px;"></p>
   </div>`);
   wrap.appendChild(uploadCard);
@@ -780,7 +782,7 @@ function renderMusicTab(){
     playerCard.appendChild(btnRow);
   }
 
-  uploadCard.querySelector('#musicFileInput').onchange = (e)=>{
+  function handleFileSelect(e){
     const statusEl = uploadCard.querySelector('#uploadStatus');
     const files = Array.from(e.target.files || []);
     if(!files.length) return;
@@ -812,7 +814,9 @@ function renderMusicTab(){
         statusEl.textContent = "❌ خطایی پیش اومد، دوباره امتحان کن.";
         statusEl.style.color = "#f87171";
       });
-  };
+  }
+  uploadCard.querySelector('#musicFileInput').onchange = handleFileSelect;
+  uploadCard.querySelector('#musicFileInputAny').onchange = handleFileSelect;
 
   refreshList();
   if(currentTrackId && currentAudio){
