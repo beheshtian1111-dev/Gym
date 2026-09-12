@@ -47,6 +47,20 @@
   .ex-row .ex-meta { font-size:11px; color:#64748b; }
   .checked .ex-name { text-decoration:line-through; color:#64748b; }
   .today-bar { background:linear-gradient(135deg,#16a34a22,#1e293b); border:1px solid #22c55e55; border-radius:12px; padding:12px; margin-bottom:16px; }
+
+  /* Glassmorphism music player */
+  .player-glass { background:linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04)); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border:1px solid rgba(255,255,255,0.18); border-radius:24px; padding:16px; box-shadow:0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12); }
+  .player-track-name { font-size:14px; font-weight:bold; text-align:center; color:#f1f5f9; margin:0 0 12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .player-progress-wrap { display:flex; align-items:center; gap:8px; direction:ltr; margin-bottom:14px; }
+  .player-time { font-size:11px; color:#94a3b8; min-width:34px; text-align:center; font-variant-numeric:tabular-nums; }
+  .player-bar-track { flex:1; height:6px; border-radius:6px; background:rgba(255,255,255,0.15); position:relative; cursor:pointer; }
+  .player-bar-fill { position:absolute; top:0; right:auto; left:0; height:100%; border-radius:6px; background:linear-gradient(90deg,#22c55e,#4ade80); width:0%; }
+  .player-controls-glass { display:flex; align-items:center; justify-content:center; gap:10px; }
+  .glass-btn { background:rgba(255,255,255,0.10); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border:1px solid rgba(255,255,255,0.20); color:#e2e8f0; cursor:pointer; border-radius:14px; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 1px 0 rgba(255,255,255,0.15), 0 2px 8px rgba(0,0,0,0.25); }
+  .glass-btn.sm { width:42px; height:42px; font-size:17px; }
+  .glass-btn.play-main { width:58px; height:58px; font-size:22px; background:linear-gradient(135deg, rgba(34,197,94,0.35), rgba(34,197,94,0.15)); border-color:rgba(74,222,128,0.5); color:#f0fdf4; }
+  .glass-btn.active { border-color:#22c55e; color:#4ade80; background:rgba(34,197,94,0.18); }
+  .player-mode-label { text-align:center; font-size:11px; color:#64748b; margin-top:10px; }
   .meal-row, .vit-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #1e293b; font-size:13px; gap:8px; }
   .achv-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
   .achv { background:#1e293b; border:1px solid #334155; border-radius:10px; padding:10px; text-align:center; }
@@ -720,7 +734,7 @@ function renderMusicTab(){
   const listSection = el(`<div class="section" id="musicListSection"><h2>پلی‌لیست</h2></div>`);
   wrap.appendChild(listSection);
 
-  const playerCard = el(`<div class="card" id="playerCard" style="display:none;position:sticky;bottom:8px;"></div>`);
+  const playerCard = el(`<div class="player-glass" id="playerCard" style="display:none;position:sticky;bottom:8px;"></div>`);
   wrap.appendChild(playerCard);
 
   let tracksCache = [];
@@ -788,6 +802,31 @@ function renderMusicTab(){
     if(i>=0) playTrack(tracksCache[i]);
   }
 
+  function formatTime(sec){
+    if(!isFinite(sec) || sec<0) sec = 0;
+    const m = Math.floor(sec/60);
+    const s = Math.floor(sec%60);
+    return m + ":" + (s<10?"0":"") + s;
+  }
+
+  function attachProgressEvents(){
+    if(!currentAudio) return;
+    currentAudio.ontimeupdate = ()=>{
+      const fill = playerCard.querySelector('.player-bar-fill');
+      const curEl = playerCard.querySelector('.player-time-current');
+      const durEl = playerCard.querySelector('.player-time-duration');
+      if(fill && currentAudio.duration){
+        fill.style.width = (currentAudio.currentTime / currentAudio.duration * 100) + "%";
+      }
+      if(curEl) curEl.textContent = formatTime(currentAudio.currentTime);
+      if(durEl) durEl.textContent = formatTime(currentAudio.duration);
+    };
+    currentAudio.onloadedmetadata = ()=>{
+      const durEl = playerCard.querySelector('.player-time-duration');
+      if(durEl) durEl.textContent = formatTime(currentAudio.duration);
+    };
+  }
+
   function playTrack(t){
     if(currentTrackId===t.id && currentAudio){
       if(isPlaying){ currentAudio.pause(); isPlaying=false; }
@@ -809,6 +848,7 @@ function renderMusicTab(){
       }
       nextTrack();
     };
+    attachProgressEvents();
     refreshList();
     updatePlayerBar(t);
   }
@@ -816,29 +856,43 @@ function renderMusicTab(){
   function updatePlayerBar(t){
     playerCard.style.display = "block";
     playerCard.innerHTML = "";
-    playerCard.appendChild(el(`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-      <span style="font-size:13px;">🎧 در حال پخش: ${t.name}</span>
-    </div>`));
-    const btnRow = el(`<div style="display:flex;gap:8px;margin-top:10px;justify-content:center;align-items:center;flex-wrap:wrap;"></div>`);
 
-    const shuffleBtn = el(`<button style="background:none;border:1px solid ${musicShuffle?'#22c55e':'#334155'};border-radius:8px;color:${musicShuffle?'#4ade80':'#94a3b8'};cursor:pointer;font-size:16px;padding:6px 10px;">🔀</button>`);
+    playerCard.appendChild(el(`<p class="player-track-name">🎧 ${t.name}</p>`));
+
+    const progressWrap = el(`<div class="player-progress-wrap">
+      <span class="player-time player-time-current">${formatTime(currentAudio?currentAudio.currentTime:0)}</span>
+      <div class="player-bar-track"><div class="player-bar-fill"></div></div>
+      <span class="player-time player-time-duration">${formatTime(currentAudio?currentAudio.duration:0)}</span>
+    </div>`);
+    const barTrack = progressWrap.querySelector('.player-bar-track');
+    barTrack.onclick = (e)=>{
+      if(!currentAudio || !currentAudio.duration) return;
+      const rect = barTrack.getBoundingClientRect();
+      const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+      currentAudio.currentTime = ratio * currentAudio.duration;
+    };
+    playerCard.appendChild(progressWrap);
+
+    const btnRow = el(`<div class="player-controls-glass"></div>`);
+
+    const shuffleBtn = el(`<button class="glass-btn sm ${musicShuffle?'active':''}">🔀</button>`);
     shuffleBtn.onclick = ()=>{ musicShuffle = !musicShuffle; updatePlayerBar(t); };
 
-    const prevBtn = el(`<button style="background:none;border:none;color:#e2e8f0;cursor:pointer;font-size:20px;padding:6px 8px;">⏮</button>`);
+    const prevBtn = el(`<button class="glass-btn sm">⏮</button>`);
     prevBtn.onclick = ()=> prevTrack();
 
-    const toggleBtn = el(`<button class="btn btn-secondary" style="font-size:16px;padding:8px 18px;border-radius:50px;">${isPlaying?'⏸':'▶️'}</button>`);
+    const toggleBtn = el(`<button class="glass-btn play-main">${isPlaying?'⏸':'▶️'}</button>`);
     toggleBtn.onclick = ()=>{
       if(isPlaying){ currentAudio.pause(); isPlaying=false; } else { currentAudio.play(); isPlaying=true; }
       refreshList(); updatePlayerBar(t);
     };
 
-    const nextBtn = el(`<button style="background:none;border:none;color:#e2e8f0;cursor:pointer;font-size:20px;padding:6px 8px;">⏭</button>`);
+    const nextBtn = el(`<button class="glass-btn sm">⏭</button>`);
     nextBtn.onclick = ()=> nextTrack();
 
     const repeatIcon = musicRepeat==="one" ? "🔂" : "🔁";
     const repeatActive = musicRepeat!=="off";
-    const repeatBtn = el(`<button style="background:none;border:1px solid ${repeatActive?'#22c55e':'#334155'};border-radius:8px;color:${repeatActive?'#4ade80':'#94a3b8'};cursor:pointer;font-size:16px;padding:6px 10px;">${repeatIcon}</button>`);
+    const repeatBtn = el(`<button class="glass-btn sm ${repeatActive?'active':''}">${repeatIcon}</button>`);
     repeatBtn.onclick = ()=>{
       musicRepeat = musicRepeat==="off" ? "all" : musicRepeat==="all" ? "one" : "off";
       updatePlayerBar(t);
@@ -851,8 +905,10 @@ function renderMusicTab(){
     btnRow.appendChild(repeatBtn);
     playerCard.appendChild(btnRow);
 
-    const modeLabel = el(`<p style="text-align:center;font-size:11px;color:#64748b;margin-top:6px;">${musicShuffle?'شافل روشن':'شافل خاموش'} — ${musicRepeat==='off'?'بدون تکرار':musicRepeat==='all'?'تکرار همه':'تکرار یکی'}</p>`);
+    const modeLabel = el(`<p class="player-mode-label">${musicShuffle?'شافل روشن':'شافل خاموش'} — ${musicRepeat==='off'?'بدون تکرار':musicRepeat==='all'?'تکرار همه':'تکرار یکی'}</p>`);
     playerCard.appendChild(modeLabel);
+
+    attachProgressEvents();
   }
 
   function handleFileSelect(e){
