@@ -367,7 +367,7 @@ function renderDashboard(){
   wrap.appendChild(todayBar);
 
   const tabs = el(`<div class="tabs"></div>`);
-  [["workout","تمرین"],["diet","برنامه غذایی"],["body","بدن و BMI"],["achievements","دستاوردها"]].forEach(([k,l])=>{
+  [["workout","تمرین"],["diet","برنامه غذایی"],["body","بدن و BMI"],["music","موزیک"],["achievements","دستاوردها"]].forEach(([k,l])=>{
     const b = el(`<button class="tab-btn ${state.tab===k?'active':''}">${l}</button>`);
     b.onclick = ()=>{ state.tab=k; render(); };
     tabs.appendChild(b);
@@ -378,6 +378,7 @@ function renderDashboard(){
   if(state.tab==="workout") content.appendChild(renderWorkoutTab());
   else if(state.tab==="diet") content.appendChild(renderDietTab());
   else if(state.tab==="body") content.appendChild(renderBodyTab());
+  else if(state.tab==="music") content.appendChild(renderMusicTab());
   else if(state.tab==="achievements") content.appendChild(renderAchievementsTab());
   wrap.appendChild(content);
 
@@ -642,6 +643,149 @@ function renderBodyTab(){
     measureSection.appendChild(resultGrid);
   }
   wrap.appendChild(measureSection);
+
+  return wrap;
+}
+
+// ---------------- MUSIC (IndexedDB) ----------------
+const MUSIC_DB_NAME = "vesta_fitness_music";
+const MUSIC_STORE = "tracks";
+let musicDB = null;
+let currentAudio = null;
+let currentTrackId = null;
+let isPlaying = false;
+
+function openMusicDB(){
+  return new Promise((resolve, reject)=>{
+    if(musicDB) return resolve(musicDB);
+    const req = indexedDB.open(MUSIC_DB_NAME, 1);
+    req.onupgradeneeded = (e)=>{
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains(MUSIC_STORE)){
+        db.createObjectStore(MUSIC_STORE, { keyPath: "id" });
+      }
+    };
+    req.onsuccess = (e)=>{ musicDB = e.target.result; resolve(musicDB); };
+    req.onerror = (e)=>{ reject(e); };
+  });
+}
+function addTrack(file){
+  return openMusicDB().then(db=>new Promise((resolve,reject)=>{
+    const id = "t"+Date.now()+Math.random().toString(36).slice(2);
+    const tx = db.transaction(MUSIC_STORE, "readwrite");
+    tx.objectStore(MUSIC_STORE).put({ id, name: file.name, blob: file });
+    tx.oncomplete = ()=>resolve(id);
+    tx.onerror = (e)=>reject(e);
+  }));
+}
+function getAllTracks(){
+  return openMusicDB().then(db=>new Promise((resolve,reject)=>{
+    const tx = db.transaction(MUSIC_STORE, "readonly");
+    const req = tx.objectStore(MUSIC_STORE).getAll();
+    req.onsuccess = ()=>resolve(req.result);
+    req.onerror = (e)=>reject(e);
+  }));
+}
+function deleteTrack(id){
+  return openMusicDB().then(db=>new Promise((resolve,reject)=>{
+    const tx = db.transaction(MUSIC_STORE, "readwrite");
+    tx.objectStore(MUSIC_STORE).delete(id);
+    tx.oncomplete = ()=>resolve();
+    tx.onerror = (e)=>reject(e);
+  }));
+}
+
+function renderMusicTab(){
+  const wrap = el(`<div></div>`);
+  wrap.appendChild(el(`<div class="section">
+    <h2>🎵 موزیک‌های باشگاه</h2>
+    <p style="font-size:12px;color:#94a3b8;margin-bottom:10px;">فایل‌های موزیک گوشیت رو اضافه کن، همیشه توی همین مرورگر ذخیره می‌مونن و لازم نیست دوباره وارد کنی.</p>
+  </div>`));
+
+  const uploadCard = el(`<div class="card">
+    <input type="file" id="musicFileInput" accept="audio/*" multiple style="width:100%;color:#94a3b8;"/>
+  </div>`);
+  wrap.appendChild(uploadCard);
+
+  const listSection = el(`<div class="section" id="musicListSection"><h2>پلی‌لیست</h2></div>`);
+  wrap.appendChild(listSection);
+
+  const playerCard = el(`<div class="card" id="playerCard" style="display:none;position:sticky;bottom:8px;"></div>`);
+  wrap.appendChild(playerCard);
+
+  function refreshList(){
+    getAllTracks().then(tracks=>{
+      const existingList = listSection.querySelector('.music-list');
+      if(existingList) existingList.remove();
+      const listWrap = el(`<div class="music-list"></div>`);
+      if(!tracks.length){
+        listWrap.appendChild(el(`<p style="font-size:13px;color:#64748b;">هنوز موزیکی اضافه نکردی.</p>`));
+      }
+      tracks.forEach(t=>{
+        const row = el(`<div class="meal-row"></div>`);
+        const isCurrentPlaying = currentTrackId===t.id && isPlaying;
+        const playBtn = el(`<button style="background:none;border:none;color:${isCurrentPlaying?'#22c55e':'#e2e8f0'};cursor:pointer;font-size:16px;">${isCurrentPlaying?'⏸':'▶️'}</button>`);
+        playBtn.onclick = ()=> playTrack(t);
+        row.appendChild(playBtn);
+        row.appendChild(el(`<span style="flex:1;text-align:right;font-size:13px;">${t.name}</span>`));
+        const rm = el(`<button class="btn-danger-ghost">حذف</button>`);
+        rm.onclick = ()=>{
+          if(currentTrackId===t.id && currentAudio){ currentAudio.pause(); currentAudio=null; currentTrackId=null; isPlaying=false; playerCard.style.display="none"; }
+          deleteTrack(t.id).then(refreshList);
+        };
+        row.appendChild(rm);
+        listWrap.appendChild(row);
+      });
+      listSection.appendChild(listWrap);
+    });
+  }
+
+  function playTrack(t){
+    if(currentTrackId===t.id && currentAudio){
+      if(isPlaying){ currentAudio.pause(); isPlaying=false; }
+      else { currentAudio.play(); isPlaying=true; }
+      refreshList(); updatePlayerBar(t);
+      return;
+    }
+    if(currentAudio){ currentAudio.pause(); }
+    const url = URL.createObjectURL(t.blob);
+    currentAudio = new Audio(url);
+    currentTrackId = t.id;
+    currentAudio.play();
+    isPlaying = true;
+    currentAudio.onended = ()=>{ isPlaying=false; refreshList(); updatePlayerBar(t); };
+    refreshList();
+    updatePlayerBar(t);
+  }
+
+  function updatePlayerBar(t){
+    playerCard.style.display = "block";
+    playerCard.innerHTML = "";
+    playerCard.appendChild(el(`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <span style="font-size:13px;">🎧 در حال پخش: ${t.name}</span>
+    </div>`));
+    const btnRow = el(`<div style="display:flex;gap:8px;margin-top:8px;"></div>`);
+    const toggleBtn = el(`<button class="btn btn-secondary" style="font-size:13px;">${isPlaying?'⏸ توقف':'▶️ پخش'}</button>`);
+    toggleBtn.onclick = ()=>{
+      if(isPlaying){ currentAudio.pause(); isPlaying=false; } else { currentAudio.play(); isPlaying=true; }
+      refreshList(); updatePlayerBar(t);
+    };
+    btnRow.appendChild(toggleBtn);
+    playerCard.appendChild(btnRow);
+  }
+
+  uploadCard.querySelector('#musicFileInput').onchange = (e)=>{
+    const files = Array.from(e.target.files || []);
+    Promise.all(files.map(addTrack)).then(()=>{ refreshList(); e.target.value = ""; });
+  };
+
+  refreshList();
+  if(currentTrackId && currentAudio){
+    getAllTracks().then(tracks=>{
+      const t = tracks.find(x=>x.id===currentTrackId);
+      if(t) updatePlayerBar(t);
+    });
+  }
 
   return wrap;
 }
