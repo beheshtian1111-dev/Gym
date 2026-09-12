@@ -658,15 +658,20 @@ let isPlaying = false;
 function openMusicDB(){
   return new Promise((resolve, reject)=>{
     if(musicDB) return resolve(musicDB);
-    const req = indexedDB.open(MUSIC_DB_NAME, 1);
-    req.onupgradeneeded = (e)=>{
-      const db = e.target.result;
-      if(!db.objectStoreNames.contains(MUSIC_STORE)){
-        db.createObjectStore(MUSIC_STORE, { keyPath: "id" });
-      }
-    };
-    req.onsuccess = (e)=>{ musicDB = e.target.result; resolve(musicDB); };
-    req.onerror = (e)=>{ reject(e); };
+    try{
+      const req = indexedDB.open(MUSIC_DB_NAME, 1);
+      req.onupgradeneeded = (e)=>{
+        const db = e.target.result;
+        if(!db.objectStoreNames.contains(MUSIC_STORE)){
+          db.createObjectStore(MUSIC_STORE, { keyPath: "id" });
+        }
+      };
+      req.onsuccess = (e)=>{ musicDB = e.target.result; resolve(musicDB); };
+      req.onerror = (e)=>{ reject(e.target.error || e); };
+      req.onblocked = ()=>{ reject(new Error("database blocked")); };
+    }catch(err){
+      reject(err);
+    }
   });
 }
 function addTrack(file){
@@ -704,6 +709,7 @@ function renderMusicTab(){
 
   const uploadCard = el(`<div class="card">
     <input type="file" id="musicFileInput" accept="audio/*" multiple style="width:100%;color:#94a3b8;"/>
+    <p id="uploadStatus" style="font-size:12px;color:#94a3b8;margin-top:8px;"></p>
   </div>`);
   wrap.appendChild(uploadCard);
 
@@ -775,8 +781,37 @@ function renderMusicTab(){
   }
 
   uploadCard.querySelector('#musicFileInput').onchange = (e)=>{
+    const statusEl = uploadCard.querySelector('#uploadStatus');
     const files = Array.from(e.target.files || []);
-    Promise.all(files.map(addTrack)).then(()=>{ refreshList(); e.target.value = ""; });
+    if(!files.length) return;
+    if(!window.indexedDB){
+      statusEl.textContent = "❌ مرورگرت از ذخیره‌سازی موزیک پشتیبانی نمی‌کنه (حالت خصوصی/Private رو خاموش کن).";
+      statusEl.style.color = "#f87171";
+      return;
+    }
+    statusEl.style.color = "#94a3b8";
+    statusEl.textContent = `⏳ در حال افزودن ${files.length} فایل...`;
+    Promise.all(files.map(f=>addTrack(f).catch(err=>{ console.error("addTrack failed", f.name, err); return null; })))
+      .then((results)=>{
+        const okCount = results.filter(r=>r).length;
+        if(okCount===0){
+          statusEl.textContent = "❌ اضافه کردن فایل(ها) ناموفق بود. دوباره امتحان کن.";
+          statusEl.style.color = "#f87171";
+        } else if(okCount < files.length){
+          statusEl.textContent = `⚠️ ${okCount} از ${files.length} فایل اضافه شد.`;
+          statusEl.style.color = "#fbbf24";
+        } else {
+          statusEl.textContent = `✅ ${okCount} فایل با موفقیت اضافه شد.`;
+          statusEl.style.color = "#4ade80";
+        }
+        refreshList();
+        e.target.value = "";
+      })
+      .catch(err=>{
+        console.error(err);
+        statusEl.textContent = "❌ خطایی پیش اومد، دوباره امتحان کن.";
+        statusEl.style.color = "#f87171";
+      });
   };
 
   refreshList();
