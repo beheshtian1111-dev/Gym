@@ -1,5 +1,60 @@
 <!DOCTYPE html>
+<!-- ============================================== -->
+<!-- کد کامل و استاندارد بخش <head> برای index.html -->
+<!-- شامل PWA Manifest، متاتگ‌های سئو، استایل‌ها و آیکون‌ها -->
+<!-- ============================================== -->
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Gym Pro | برنامه‌ساز و مربی هوشمند بدنسازی</title>
+
+  <!-- اتصال فایل مانیفست برای تبدیل به اپلیکیشن PWA و رفع خطاهای PWABuilder -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- رنگ تم نوار وضعیت در مرورگر و اپلیکیشن موبایل -->
+  <meta name="theme-color" content="#101417">
+  <meta name="msapplication-navbutton-color" content="#101417">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="GymPro">
+
+  <!-- متاتگ‌های توضیحات و کاربرد -->
+  <meta name="description" content="برنامه‌ساز و ردیاب هوشمند بدنسازی، مربی تغذیه، تایمر استراحت و ثبت رکوردها">
+  <meta name="application-name" content="Gym Pro">
+
+  <!-- آیکون‌های استاندارد Favicon و اپل -->
+  <link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/192/2964/2964514.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="https://cdn-icons-png.flaticon.com/512/2964/2964514.png">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/192/2964/2964514.png">
+
+  <!-- فونت‌ها و آیکون‌ها -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- استایل‌شیت Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#22c55e',
+            'surface-dark': '#101417',
+            'surface-card': '#181c1f',
+            'surface-bright': '#23292e'
+          },
+          fontFamily: {
+            sans: ['Vazirmatn', 'Plus Jakarta Sans', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
 <html dir="rtl" lang="fa"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
