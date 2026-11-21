@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 
-<html dir="rtl" lang="fa">
-<head>
+<html dir="rtl" lang="fa"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
 <title>جیم پرو | مربی هوشمند و ردیاب بدنسازی</title>
@@ -12,17 +11,18 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Vazirmatn:wght@300;400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
 <style>
     :root {
       --bg: #101417;
       --surface: #181c1f;
-      --surface-card: #1d2226;
+      --surface-card: #1c2023;
       --surface-border: rgba(255, 255, 255, 0.08);
       --primary: #22c55e;
       --primary-glow: rgba(34, 197, 94, 0.25);
       --accent-blue: #38bdf8;
       --accent-amber: #f59e0b;
+      --accent-purple: #a855f7;
       --text: #f1f5f9;
       --text-muted: #94a3b8;
       --danger: #ef4444;
@@ -38,7 +38,7 @@
       user-select: none;
     }
 
-    input, button, textarea {
+    input, button, textarea, select {
       font-family: inherit;
       user-select: auto;
     }
@@ -46,7 +46,7 @@
     body {
       background-color: var(--bg);
       color: var(--text);
-      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Vazirmatn', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -65,6 +65,7 @@
       position: relative;
       padding-bottom: calc(85px + var(--safe-bottom));
       box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+      background: var(--bg);
     }
 
     /* هدر شیشه‌ای */
@@ -75,7 +76,7 @@
       background: rgba(16, 20, 23, 0.88);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
-      padding: 12px 18px;
+      padding: 14px 18px;
       border-bottom: 1px solid var(--surface-border);
       display: flex;
       align-items: center;
@@ -85,29 +86,75 @@
     .user-badge {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+    }
+
+    .user-avatar-wrap {
+      position: relative;
     }
 
     .user-avatar {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       border: 2px solid var(--primary);
       object-fit: cover;
       background: #20272c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--primary);
     }
 
     .streak-pill {
       background: rgba(34, 197, 94, 0.12);
       color: var(--primary);
       border: 1px solid rgba(34, 197, 94, 0.3);
-      padding: 4px 10px;
+      padding: 6px 12px;
       border-radius: 20px;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .streak-pill:hover {
+      background: rgba(34, 197, 94, 0.2);
+    }
+
+    /* نوار ناوبری سریع در بالای صفحه */
+    .quick-tabs-nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 12px 16px 4px;
+      scrollbar-width: none;
+    }
+    .quick-tabs-nav::-webkit-scrollbar {
+      display: none;
+    }
+    .quick-tab-chip {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .quick-tab-chip.active {
+      background: rgba(34, 197, 94, 0.15);
+      border-color: var(--primary);
+      color: var(--primary);
     }
 
     /* نوار پایین */
@@ -116,13 +163,13 @@
       bottom: 0;
       width: 100%;
       max-width: 480px;
-      background: rgba(16, 20, 23, 0.94);
+      background: rgba(16, 20, 23, 0.95);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       border-top: 1px solid var(--surface-border);
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      padding: 8px 6px calc(6px + var(--safe-bottom));
+      padding: 8px 4px calc(6px + var(--safe-bottom));
       z-index: 50;
     }
 
@@ -161,7 +208,7 @@
     /* صفحات تب */
     .tab-content {
       display: none;
-      padding: 16px;
+      padding: 12px 16px 20px;
       animation: fadeIn 0.25s ease-out;
     }
 
@@ -180,7 +227,7 @@
       border: 1px solid var(--surface-border);
       border-radius: var(--radius);
       padding: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       position: relative;
     }
 
@@ -195,7 +242,7 @@
 
     .glow-box {
       border: 1px solid rgba(34, 197, 94, 0.35);
-      background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(24, 28, 31, 0.8) 100%);
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(24, 28, 31, 0.85) 100%);
     }
 
     /* تایمر */
@@ -215,26 +262,35 @@
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       color: var(--primary);
       background: rgba(34, 197, 94, 0.08);
-      box-shadow: 0 0 15px var(--primary-glow);
+      box-shadow: 0 0 16px var(--primary-glow);
+      font-family: 'Plus Jakarta Sans', monospace;
     }
 
     .timer-btn {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--surface-border);
       color: var(--text);
-      padding: 7px 12px;
+      padding: 8px 12px;
       border-radius: 10px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 700;
       cursor: pointer;
+      transition: background 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .timer-btn:active {
+      transform: scale(0.96);
     }
 
     .timer-btn.primary {
       background: var(--primary);
-      color: #000;
+      color: #0b0f12;
       font-weight: 800;
       border: none;
     }
@@ -242,34 +298,37 @@
     /* جدول ست‌ها */
     .set-row {
       display: grid;
-      grid-template-columns: 36px 1fr 1fr 40px;
+      grid-template-columns: 32px 1fr 1fr 40px;
       gap: 8px;
       align-items: center;
       padding: 6px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     }
 
     .set-input {
       background: #121619;
       border: 1px solid var(--surface-border);
       color: var(--text);
-      border-radius: 8px;
-      padding: 8px;
+      border-radius: 10px;
+      padding: 9px 6px;
       text-align: center;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 0.95rem;
       width: 100%;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: border-color 0.2s;
     }
 
     .set-input:focus {
       outline: none;
       border-color: var(--primary);
+      background: #171d21;
     }
 
     .check-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
       border: 1px solid var(--surface-border);
       background: rgba(255, 255, 255, 0.05);
       color: var(--text-muted);
@@ -277,20 +336,151 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      transition: all 0.2s;
     }
 
     .check-btn.checked {
       background: var(--primary);
       color: #0b0f12;
       border-color: var(--primary);
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    /* دکمه‌های اکشن ریز کارت تمرین */
+    .action-icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--surface-border);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .action-icon-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    .action-icon-btn.edit-btn:hover {
+      color: var(--primary);
+      border-color: rgba(34, 197, 94, 0.35);
+    }
+    .action-icon-btn.delete-btn:hover {
+      color: var(--danger);
+      border-color: rgba(239, 68, 68, 0.35);
+    }
+
+    /* دکمه افزودن حرکت جدید سرفصل تمرین */
+    .add-exercise-banner-btn {
+      width: 100%;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1.5px dashed rgba(34, 197, 94, 0.45);
+      color: var(--primary);
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      transition: all 0.2s ease;
+    }
+    .add-exercise-banner-btn:hover {
+      background: rgba(34, 197, 94, 0.18);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(34, 197, 94, 0.15);
+    }
+    .add-exercise-banner-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* مودال ایجاد/ویرایش حرکت */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    @media (min-width: 481px) {
+      .modal-overlay {
+        align-items: center;
+        padding: 20px;
+      }
+    }
+    .modal-sheet {
+      width: 100%;
+      max-width: 480px;
+      background: #181c1f;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px 24px 0 0;
+      padding: 22px 20px calc(24px + var(--safe-bottom));
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+      animation: slideUp 0.25s ease-out;
+    }
+    @media (min-width: 481px) {
+      .modal-sheet {
+        border-radius: 20px;
+        padding: 22px 24px;
+      }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .form-input, .form-select {
+      width: 100%;
+      background: #121619;
+      border: 1px solid var(--surface-border);
+      color: #fff;
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-select:focus {
+      border-color: var(--primary);
+      background: #171d21;
     }
 
     /* پلیر صوتی شیشه‌ای */
     .player-card {
-      background: linear-gradient(145deg, rgba(29, 34, 38, 0.7) 0%, rgba(18, 22, 25, 0.9) 100%);
+      background: linear-gradient(145deg, rgba(29, 34, 38, 0.8) 0%, rgba(18, 22, 25, 0.95) 100%);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(56, 189, 248, 0.2);
+      border: 1px solid rgba(56, 189, 248, 0.25);
     }
 
     .progress-bar-container {
@@ -305,9 +495,10 @@
 
     .progress-bar-fill {
       height: 100%;
-      width: 35%;
+      width: 45%;
       background: linear-gradient(90deg, var(--accent-blue), var(--primary));
       border-radius: 10px;
+      transition: width 0.1s linear;
     }
 
     /* لیوان‌های آب */
@@ -315,24 +506,30 @@
       display: grid;
       grid-template-columns: repeat(8, 1fr);
       gap: 6px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .water-cup {
       background: rgba(56, 189, 248, 0.08);
       border: 1px solid rgba(56, 189, 248, 0.2);
       border-radius: 8px;
-      padding: 8px 0;
+      padding: 10px 0;
       text-align: center;
       cursor: pointer;
       color: var(--accent-blue);
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
     }
 
     .water-cup.filled {
       background: var(--accent-blue);
-      color: #000;
+      color: #0b0f12;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
     }
 
     /* دکمه اکشن اصلی */
@@ -351,64 +548,106 @@
       justify-content: center;
       gap: 8px;
       box-shadow: 0 4px 20px var(--primary-glow);
-      margin-top: 10px;
+      margin-top: 8px;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+    .main-action-btn:active {
+      transform: scale(0.98);
     }
 
-    /* دکمه دانلود مستقیم فایل HTML */
-    .download-html-banner {
-      background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(56, 189, 248, 0.15) 100%);
-      border: 1px solid var(--primary);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 16px;
+    .badge-card {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+    .badge-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    /* Toast Notification */
+    #toast-msg {
+      position: fixed;
+      bottom: calc(75px + var(--safe-bottom));
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1c2023;
+      border: 1px solid var(--primary);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      z-index: 120;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #toast-msg.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
     }
   </style>
-</link></head>
+</head>
 <body>
 <div id="app-container">
-<!-- هدر شیشه‌ای -->
+<!-- هدر شیشه‌ای اصلی -->
 <header class="app-header">
 <div class="user-badge">
-<img alt="Avatar" class="user-avatar" src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+<div class="user-avatar-wrap">
+<div class="user-avatar">
+<span class="material-symbols-outlined" style="font-size: 24px;">fitness_center</span>
+</div>
+</div>
 <div>
-<div style="font-size: 0.9rem; font-weight: 800;">جیم پرو هوشمند</div>
-<div id="current-date-jalali" style="font-size: 0.72rem; color: var(--text-muted);">امروز ۱۲ اردیبهشت</div>
+<div style="font-size: 0.95rem; font-weight: 800;">جیم پرو هوشمند</div>
+<div id="current-date-jalali" style="font-size: 0.72rem; color: var(--text-muted);">امروز ۱۲ اردیبهشت • جلسه سینه و سرشانه</div>
 </div>
 </div>
-<div class="streak-pill">
-<span class="material-symbols-outlined" style="font-size: 18px;">local_fire_department</span>
+<div class="streak-pill" onclick="addStreak()">
+<span class="material-symbols-outlined" style="font-size: 19px; fill: 1;">local_fire_department</span>
 <span id="streak-counter">۱۲ روز استمرار</span>
 </div>
 </header>
-<!-- نوار دانلود مستقیم فایل HTML -->
-<div style="padding: 12px 16px 0;">
-<div class="download-html-banner">
-<div>
-<div style="font-weight: 800; font-size: 0.88rem; color: var(--primary);">دریافت فایل index.html</div>
-<div style="font-size: 0.72rem; color: var(--text-muted);">دانلود مستقیم فایل خالص آماده ریپو</div>
-</div>
-<button onclick="downloadSelfAsHTML()" style="background: var(--primary); color: #0b0f12; border: none; font-weight: 800; font-size: 0.8rem; padding: 8px 14px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-<span class="material-symbols-outlined" style="font-size: 18px;">download</span>
-          دانلود HTML
-        </button>
-</div>
+<!-- نوار ناوبری دسترسی سریع تب‌ها (بالای صفحه) -->
+<div class="quick-tabs-nav">
+<button class="quick-tab-chip active" id="qtab-workout" onclick="switchTab('workout')">
+<span class="material-symbols-outlined" style="font-size: 17px;">fitness_center</span>
+      تمرین
+    </button>
+<button class="quick-tab-chip" id="qtab-nutrition" onclick="switchTab('nutrition')">
+<span class="material-symbols-outlined" style="font-size: 17px;">nutrition</span>
+      تغذیه
+    </button>
+<button class="quick-tab-chip" id="qtab-lab" onclick="switchTab('lab')">
+<span class="material-symbols-outlined" style="font-size: 17px;">vital_signs</span>
+      آزمایشگاه
+    </button>
+<button class="quick-tab-chip" id="qtab-gamification" onclick="switchTab('gamification')">
+<span class="material-symbols-outlined" style="font-size: 17px;">military_tech</span>
+      انگیزشی
+    </button>
+<button class="quick-tab-chip" id="qtab-tools" onclick="switchTab('tools')">
+<span class="material-symbols-outlined" style="font-size: 17px;">tune</span>
+      امکانات
+    </button>
 </div>
 <!-- تب ۱: مربی تمرین -->
 <main class="tab-content active" id="tab-workout">
-<!-- پیشنهاد مربی هوشمند (Overload) -->
-<div class="card glow-box">
-<div style="display: flex; align-items: center; gap: 8px; color: var(--primary); font-size: 0.85rem; font-weight: 800; margin-bottom: 6px;">
-<span class="material-symbols-outlined" style="font-size: 18px;">auto_awesome</span>
-          پیشنهاد مربی هوشمند (Overload+)
-        </div>
-<p style="font-size: 0.82rem; line-height: 1.6; color: #cbd5e1;">
-          در حرکت پرس سینه با توجه به اجرای روان ست قبل (RPE 7)، پیشنهاد می‌شود در ست سوم وزنه را از ۸۰ به <strong>۸۲.۵ کیلوگرم</strong> برسانید.
-        </p>
-</div>
 <!-- تایمر استراحت بین ست‌ها -->
 <div class="card">
 <div class="timer-container">
@@ -424,71 +663,88 @@
 </div>
 </div>
 </div>
-<!-- کارت حرکات تمرینی -->
-<div class="card">
-<div class="card-title" style="justify-content: space-between;">
-<span style="display: flex; align-items: center; gap: 6px;">
-<span class="material-symbols-outlined" style="color: var(--primary)">fitness_center</span>
-            پرس سینه هالتر (۴ ست)
-          </span>
-<span style="font-size: 0.78rem; color: var(--primary); background: rgba(34, 197, 94, 0.1); padding: 2px 8px; border-radius: 6px;">اصلی</span>
-</div>
-<div style="display: grid; grid-template-columns: 36px 1fr 1fr 40px; gap: 8px; font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-bottom: 6px;">
-<div>ست</div>
-<div>وزنه (kg)</div>
-<div>تکرار</div>
-<div>تایید</div>
-</div>
-<!-- ست‌ها -->
-<div id="exercise-sets-container"></div>
-<button class="timer-btn" onclick="addNewSet()" style="width: 100%; margin-top: 10px;">
-          + افزودن ست جدید
-        </button>
-</div>
+<!-- دکمه سرفصل افزودن حرکت جدید -->
+<button class="add-exercise-banner-btn" onclick="openExerciseModal()">
+<span class="material-symbols-outlined" style="font-size: 20px;">add_circle</span>
+<span>+ افزودن حرکت جدید به برنامه</span>
+</button>
+<!-- لیست حرکات تمرینی داینامیک -->
+<div id="exercises-list-wrapper"></div>
 <button class="main-action-btn" onclick="finishWorkoutSession()">
 <span class="material-symbols-outlined">check_circle</span>
-        ثبت و تکمیل جلسه تمرین
-      </button>
+      ثبت و تکمیل جلسه تمرین
+    </button>
 </main>
 <!-- تب ۲: مربی تغذیه -->
 <main class="tab-content" id="tab-nutrition">
+<!-- وضعیت کالری روزانه -->
 <div class="card glow-box">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-<div style="font-size: 0.9rem; font-weight: 800;">وضعیت متابولیک روزانه</div>
-<span style="font-size: 0.75rem; color: var(--primary);">هدف کات عضلانی</span>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+<div style="font-size: 0.92rem; font-weight: 800;">وضعیت متابولیک روزانه</div>
+<span style="font-size: 0.75rem; color: var(--primary); font-weight: 700; background: rgba(34,197,94,0.12); padding: 2px 8px; border-radius: 6px;">هدف کات عضلانی</span>
 </div>
-<div style="text-align: center; margin: 15px 0;">
-<div id="cal-remaining" style="font-size: 2.2rem; font-weight: 900; color: var(--primary);">۳۵۰</div>
-<div style="font-size: 0.75rem; color: var(--text-muted);">کالری باقیمانده از ۲,۰۵۰ مجاز</div>
+<div style="text-align: center; margin: 16px 0;">
+<div id="cal-remaining" style="font-size: 2.4rem; font-weight: 900; color: var(--primary); font-family: 'Plus Jakarta Sans', sans-serif;">۳۵۰</div>
+<div style="font-size: 0.75rem; color: var(--text-muted);">کالری باقیمانده از ۲,۰۵۰ مجاز روزانه</div>
 </div>
-<!-- ماکروها -->
-<div style="margin-top: 10px; font-size: 0.8rem;">
+<!-- نوار ماکروها -->
+<div style="margin-top: 14px; font-size: 0.8rem;">
 <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
 <span>پروتئین: ۱۶۵ / ۱۸۰ گرم</span>
-<span style="color: var(--primary);">۹۲٪</span>
+<span style="color: var(--primary); font-weight: 700;">۹۲٪</span>
 </div>
-<div style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; margin-bottom: 10px;">
+<div style="height: 7px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; margin-bottom: 12px;">
 <div style="width: 92%; height: 100%; background: var(--primary);"></div>
 </div>
 <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
 <span>کربوهیدرات: ۲۱۰ / ۲۵۰ گرم</span>
-<span style="color: var(--accent-blue);">۸۴٪</span>
+<span style="color: var(--accent-blue); font-weight: 700;">۸۴٪</span>
 </div>
-<div style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden;">
+<div style="height: 7px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; margin-bottom: 12px;">
 <div style="width: 84%; height: 100%; background: var(--accent-blue);"></div>
 </div>
+<div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+<span>چربی مفید: ۴۸ / ۵۵ گرم</span>
+<span style="color: var(--accent-amber); font-weight: 700;">۸۷٪</span>
+</div>
+<div style="height: 7px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden;">
+<div style="width: 87%; height: 100%; background: var(--accent-amber);"></div>
 </div>
 </div>
-<!-- ردیاب آب -->
+</div>
+<!-- ردیاب آب تعاملی -->
 <div class="card">
 <div style="display: flex; justify-content: space-between; align-items: center;">
 <div class="card-title" style="margin-bottom: 0;">
 <span class="material-symbols-outlined" style="color: var(--accent-blue);">water_drop</span>
-            آب مصرفی روزانه
-          </div>
-<span id="water-stat" style="font-size: 0.85rem; font-weight: 800; color: var(--accent-blue);">۲۲۵۰ / ۳۰۰۰ ml</span>
+          آب مصرفی روزانه
+        </div>
+<span id="water-stat" style="font-size: 0.85rem; font-weight: 800; color: var(--accent-blue); font-family: 'Plus Jakarta Sans', sans-serif;">۱۵۰۰ / ۲۰۰۰ ml</span>
 </div>
+<p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">روی هر لیوان ضربه بزنید تا میزان نوشیدن آب ثبت شود:</p>
 <div class="water-grid" id="water-cups-box"></div>
+<div style="display: flex; gap: 8px; margin-top: 12px;">
+<button class="timer-btn" onclick="addWaterCup(1)" style="flex: 1; color: var(--accent-blue); border-color: rgba(56, 189, 248, 0.3);">
+          + یک لیوان (۲۵۰ml)
+        </button>
+<button class="timer-btn" onclick="resetWater()" style="padding: 8px 12px;">
+          ریست
+        </button>
+</div>
+</div>
+<!-- ثبت سریع وعده غذایی -->
+<div class="card">
+<div class="card-title">
+<span class="material-symbols-outlined" style="color: var(--primary);">restaurant</span>
+        ثبت سریع وعده
+      </div>
+<div style="display: flex; gap: 8px;">
+<input id="quick-meal-name" placeholder="نام غذا (مثال: سینه مرغ ۲۰۰g)" style="flex: 2; background: #121619; border: 1px solid var(--surface-border); border-radius: 10px; padding: 10px; color: #fff; font-size: 0.85rem; outline: none;" type="text"/>
+<input id="quick-meal-cal" placeholder="کالری" style="flex: 1; background: #121619; border: 1px solid var(--surface-border); border-radius: 10px; padding: 10px; color: #fff; font-size: 0.85rem; outline: none; text-align: center;" type="number"/>
+<button class="timer-btn primary" onclick="addQuickMeal()" style="border-radius: 10px; padding: 0 16px;">
+          افزودن
+        </button>
+</div>
 </div>
 </main>
 <!-- تب ۳: آزمایشگاه پیشرفت بدن -->
@@ -496,36 +752,79 @@
 <div class="card">
 <div class="card-title">
 <span class="material-symbols-outlined" style="color: var(--primary);">vital_signs</span>
-          ترکیب بدنی و بیومتریک
-        </div>
+        ترکیب بدنی و بیومتریک
+      </div>
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: center;">
-<div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 12px;">
+<div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 12px; border: 1px solid var(--surface-border);">
 <div style="font-size: 0.75rem; color: var(--text-muted);">وزن ناشتا</div>
-<div style="font-size: 1.4rem; font-weight: 900; color: var(--text); margin-top: 4px;">۷۶.۴ <span style="font-size: 0.75rem;">کیلوگرم</span></div>
-<div style="font-size: 0.7rem; color: var(--primary); margin-top: 4px;">-۲.۳ نسبت به ماه قبل</div>
+<div id="lab-weight-display" style="font-size: 1.4rem; font-weight: 900; color: var(--text); margin-top: 4px; font-family: 'Plus Jakarta Sans', sans-serif;">
+            ۷۶.۴ <span style="font-size: 0.75rem; font-family: 'Vazirmatn';">کیلوگرم</span>
 </div>
-<div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 12px;">
-<div style="font-size: 0.75rem; color: var(--text-muted);">درصد چربی (تخمینی)</div>
-<div style="font-size: 1.4rem; font-weight: 900; color: var(--accent-blue); margin-top: 4px;">۱۴.۲٪</div>
-<div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">ورزشی (Fit)</div>
+<div style="font-size: 0.7rem; color: var(--primary); margin-top: 4px;">-۲.۳ کیلوگرم نسبت به ماه قبل</div>
 </div>
+<div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 12px; border: 1px solid var(--surface-border);">
+<div style="font-size: 0.75rem; color: var(--text-muted);">درصد چربی بدنی</div>
+<div id="lab-fat-display" style="font-size: 1.4rem; font-weight: 900; color: var(--accent-blue); margin-top: 4px; font-family: 'Plus Jakarta Sans', sans-serif;">
+            ۱۴.۲٪
+          </div>
+<div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">محدوده ورزشی (Fit)</div>
+</div>
+</div>
+<!-- به‌روزرسانی وزن جاری -->
+<div style="display: flex; gap: 8px; margin-top: 14px;">
+<input id="new-weight-input" placeholder="وزن جدید (کیلوگرم)" step="0.1" style="flex: 1; background: #121619; border: 1px solid var(--surface-border); border-radius: 10px; padding: 10px; color: #fff; font-size: 0.85rem; outline: none; text-align: center;" type="number"/>
+<button class="timer-btn primary" onclick="updateCurrentWeight()" style="border-radius: 10px; padding: 0 16px;">
+          ثبت وزن
+        </button>
 </div>
 </div>
 <!-- نمودار خطی SVG تغییرات وزن -->
 <div class="card">
-<div class="card-title">
+<div class="card-title" style="justify-content: space-between;">
+<span style="display: flex; align-items: center; gap: 6px;">
 <span class="material-symbols-outlined" style="color: var(--primary);">show_chart</span>
           روند تغییر وزن هفتگی
-        </div>
-<svg style="width: 100%; height: auto; overflow: visible;" viewbox="0 0 400 120">
-<path d="M 20 90 Q 100 80, 180 60 T 380 25" fill="none" stroke="rgba(34, 197, 94, 0.2)" stroke-width="6"></path>
-<path d="M 20 90 Q 100 80, 180 60 T 380 25" fill="none" stroke="#22c55e" stroke-width="2.5"></path>
-<circle cx="20" cy="90" fill="#22c55e" r="4"></circle>
-<circle cx="100" cy="80" fill="#22c55e" r="4"></circle>
-<circle cx="180" cy="60" fill="#22c55e" r="4"></circle>
-<circle cx="280" cy="45" fill="#22c55e" r="4"></circle>
-<circle cx="380" cy="25" fill="#fff" r="6" stroke="#22c55e" stroke-width="3"></circle>
+        </span>
+<span style="font-size: 0.72rem; color: var(--text-muted);">۴ هفته اخیر</span>
+</div>
+<div style="padding: 8px 0;">
+<svg style="width: 100%; height: auto; overflow: visible;" viewbox="0 0 380 110">
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#22c55e" stop-opacity="0.25"></stop>
+<stop offset="100%" stop-color="#22c55e" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M 20 85 Q 110 75, 190 55 T 360 22 L 360 100 L 20 100 Z" fill="url(#chartGradient)"></path>
+<path d="M 20 85 Q 110 75, 190 55 T 360 22" fill="none" stroke="#22c55e" stroke-linecap="round" stroke-width="3"></path>
+<circle cx="20" cy="85" fill="#22c55e" r="4.5"></circle>
+<circle cx="110" cy="75" fill="#22c55e" r="4.5"></circle>
+<circle cx="190" cy="55" fill="#22c55e" r="4.5"></circle>
+<circle cx="275" cy="40" fill="#22c55e" r="4.5"></circle>
+<circle cx="360" cy="22" fill="#fff" r="6" stroke="#22c55e" stroke-width="3"></circle>
+<text fill="#64748b" font-size="10" text-anchor="middle" x="20" y="105">هفته ۱</text>
+<text fill="#64748b" font-size="10" text-anchor="middle" x="110" y="105">هفته ۲</text>
+<text fill="#64748b" font-size="10" text-anchor="middle" x="190" y="105">هفته ۳</text>
+<text fill="#22c55e" font-size="10" font-weight="bold" text-anchor="middle" x="360" y="105">امروز</text>
 </svg>
+</div>
+</div>
+<!-- مقایسه عکس‌های بدنی -->
+<div class="card">
+<div class="card-title">
+<span class="material-symbols-outlined" style="color: var(--accent-blue);">photo_camera</span>
+        مقایسه تصویری فرم بدن
+      </div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+<div style="background: rgba(255,255,255,0.03); border: 1px dashed var(--surface-border); border-radius: 12px; height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer;">
+<span class="material-symbols-outlined" style="color: var(--text-muted); font-size: 28px;">image</span>
+<span style="font-size: 0.72rem; color: var(--text-muted);">ماه پیش (۷۸.۷kg)</span>
+</div>
+<div style="background: rgba(34,197,94,0.05); border: 1px dashed var(--primary); border-radius: 12px; height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer;">
+<span class="material-symbols-outlined" style="color: var(--primary); font-size: 28px;">add_a_photo</span>
+<span style="font-size: 0.72rem; color: var(--primary); font-weight: 700;">ثبت عکس امروز</span>
+</div>
+</div>
 </div>
 </main>
 <!-- تب ۴: سیستم انگیزشی -->
@@ -533,305 +832,784 @@
 <div class="card glow-box">
 <div style="display: flex; justify-content: space-between; align-items: center;">
 <div>
-<div style="font-size: 1rem; font-weight: 800;">جنگجوی آهنین (سطح ۱۴)</div>
-<div style="font-size: 0.75rem; color: var(--text-muted);">رتبه ۴ در لیگ هفتگی تایتان</div>
+<div style="font-size: 1.05rem; font-weight: 800;">جنگجوی آهنین (سطح ۱۴)</div>
+<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">رتبه ۴ در لیگ هفتگی تایتان</div>
 </div>
-<span class="material-symbols-outlined" style="font-size: 32px; color: var(--primary);">military_tech</span>
+<span class="material-symbols-outlined" style="font-size: 36px; color: var(--primary);">military_tech</span>
 </div>
-<div style="margin-top: 14px;">
-<div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 4px;">
+<div style="margin-top: 16px;">
+<div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 6px;">
 <span>پیشرفت تا سطح ۱۵</span>
-<span>۳,۴۵۰ / ۴,۰۰۰ XP</span>
+<span id="xp-text" style="font-family: 'Plus Jakarta Sans', sans-serif;">۳,۴۵۰ / ۴,۰۰۰ XP</span>
 </div>
-<div style="height: 8px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden;">
-<div style="width: 86%; height: 100%; background: linear-gradient(90deg, #22c55e, #38bdf8);"></div>
+<div style="height: 9px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden;">
+<div id="xp-bar" style="width: 86%; height: 100%; background: linear-gradient(90deg, #22c55e, #38bdf8);"></div>
 </div>
+</div>
+<button class="timer-btn" onclick="claimDailyXP()" style="width: 100%; margin-top: 14px; background: rgba(34,197,94,0.15); color: var(--primary); border-color: var(--primary);">
+        + دریافت ۱۰۰ امتیاز فعالیت امروز
+      </button>
+</div>
+<!-- مدال‌ها و نشان‌ها -->
+<div class="card">
+<div class="card-title">
+<span class="material-symbols-outlined" style="color: var(--accent-amber);">workspace_premium</span>
+        نشان‌های افتخار کسب‌شده
+      </div>
+<div class="badge-card">
+<div class="badge-icon" style="background: rgba(34, 197, 94, 0.15); color: var(--primary);">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div style="flex: 1;">
+<div style="font-size: 0.85rem; font-weight: 800;">۱۰ روز تمرین پیوسته</div>
+<div style="font-size: 0.72rem; color: var(--text-muted);">پشتکار در تکمیل برنامه‌ها بدون انصراف</div>
+</div>
+<span style="font-size: 0.72rem; color: var(--primary); font-weight: 800;">کسب شده</span>
+</div>
+<div class="badge-card">
+<div class="badge-icon" style="background: rgba(56, 189, 248, 0.15); color: var(--accent-blue);">
+<span class="material-symbols-outlined">water_drop</span>
+</div>
+<div style="flex: 1;">
+<div style="font-size: 0.85rem; font-weight: 800;">هیدراتاسیون طلایی</div>
+<div style="font-size: 0.72rem; color: var(--text-muted);">نوشیدن ۲ لیتر آب برای ۷ روز مداوم</div>
+</div>
+<span style="font-size: 0.72rem; color: var(--accent-blue); font-weight: 800;">کسب شده</span>
+</div>
+<div class="badge-card">
+<div class="badge-icon" style="background: rgba(168, 85, 247, 0.15); color: var(--accent-purple);">
+<span class="material-symbols-outlined">trophy</span>
+</div>
+<div style="flex: 1;">
+<div style="font-size: 0.85rem; font-weight: 800;">ورود به باشگاه ۱۰۰kg</div>
+<div style="font-size: 0.72rem; color: var(--text-muted);">پرس سینه با توان بیشینه بالای ۱۰۰ کیلوگرم</div>
+</div>
+<span style="font-size: 0.72rem; color: var(--accent-purple); font-weight: 800;">جدید!</span>
 </div>
 </div>
 </main>
 <!-- تب ۵: ابزارها، پلیر صوتی و بکاپ -->
 <main class="tab-content" id="tab-tools">
-<!-- پلیر شیشه‌ای -->
+<!-- پلیر موزیک تمرین -->
 <div class="card player-card">
 <div style="display: flex; justify-content: space-between; align-items: center;">
-<div style="font-size: 0.85rem; font-weight: 800;">Cybernetic Pulse - HIIT Mix</div>
-<span style="font-size: 0.72rem; color: var(--accent-blue); background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 4px;">۱۴۲ BPM</span>
+<div>
+<div style="font-size: 0.88rem; font-weight: 800;">Cybernetic Pulse - HIIT Mix</div>
+<div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">موزیک محرک بیس‌دار برای تمرینات پرفشار</div>
 </div>
-<div class="progress-bar-container" onclick="seekAudio(event)">
+<span style="font-size: 0.72rem; color: var(--accent-blue); background: rgba(56, 189, 248, 0.12); padding: 3px 8px; border-radius: 6px; font-weight: 700;">۱۴۲ BPM</span>
+</div>
+<div class="progress-bar-container" id="player-track" onclick="seekAudioBar(event)">
 <div class="progress-bar-fill" id="audio-progress"></div>
 </div>
-<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-<span style="font-size: 0.72rem; color: var(--text-muted);">۰۲:۱۴</span>
-<div style="display: flex; gap: 14px; align-items: center;">
-<span class="material-symbols-outlined" style="cursor: pointer;">skip_previous</span>
-<span class="material-symbols-outlined" onclick="togglePlayAudio(this)" style="font-size: 36px; color: var(--primary); cursor: pointer;">play_circle</span>
-<span class="material-symbols-outlined" style="cursor: pointer;">skip_next</span>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+<span id="audio-time-curr" style="font-size: 0.72rem; color: var(--text-muted); font-family: 'Plus Jakarta Sans', monospace;">۰۱:۴۵</span>
+<div style="display: flex; gap: 16px; align-items: center;">
+<span class="material-symbols-outlined" onclick="showToast('آهنگ قبلی')" style="cursor: pointer; color: var(--text-muted);">skip_previous</span>
+<span class="material-symbols-outlined" id="play-pause-icon" onclick="togglePlayAudio()" style="font-size: 38px; color: var(--primary); cursor: pointer;">play_circle</span>
+<span class="material-symbols-outlined" onclick="showToast('آهنگ بعدی')" style="cursor: pointer; color: var(--text-muted);">skip_next</span>
 </div>
-<span style="font-size: 0.72rem; color: var(--text-muted);">۰۴:۳۰</span>
+<span style="font-size: 0.72rem; color: var(--text-muted); font-family: 'Plus Jakarta Sans', monospace;">۰۳:۵۰</span>
 </div>
 </div>
-<!-- محاسبه‌گر ۱RM -->
+<!-- محاسبه‌گر ۱RM بیشینه توان -->
 <div class="card">
 <div class="card-title">
 <span class="material-symbols-outlined" style="color: var(--primary);">calculate</span>
-          محاسبه‌گر بیشینه ۱RM (فرمول پیشرفته Epley)
-        </div>
+        محاسبه‌گر توان بیشینه (1RM Epley Formula)
+      </div>
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+<div>
+<label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 4px;">وزنه تمرین (kg)</label>
 <input class="set-input" id="orm-weight" oninput="calc1RM()" placeholder="وزنه (kg)" type="number" value="85"/>
+</div>
+<div>
+<label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 4px;">تعداد تکرار اجرا شده</label>
 <input class="set-input" id="orm-reps" oninput="calc1RM()" placeholder="تعداد تکرار" type="number" value="6"/>
 </div>
-<div style="background: rgba(34, 197, 94, 0.1); border-radius: 10px; padding: 12px; text-align: center; margin-top: 10px;">
-<div style="font-size: 0.75rem; color: var(--text-muted);">حداکثر توان تخمینی یک تکرار:</div>
-<div id="orm-result" style="font-size: 1.4rem; font-weight: 900; color: var(--primary); margin-top: 2px;">۱۰۲ کیلوگرم</div>
+</div>
+<div style="background: rgba(34, 197, 94, 0.1); border-radius: 12px; padding: 14px; text-align: center; margin-top: 12px; border: 1px solid rgba(34,197,94,0.25);">
+<div style="font-size: 0.75rem; color: var(--text-muted);">حداکثر توان تخمینی یک تکرار شما:</div>
+<div id="orm-result" style="font-size: 1.5rem; font-weight: 900; color: var(--primary); margin-top: 3px; font-family: 'Plus Jakarta Sans', sans-serif;">۱۰۲ کیلوگرم</div>
 </div>
 </div>
 <!-- بکاپ و پایداری اطلاعات (JSON) -->
 <div class="card">
 <div class="card-title">
 <span class="material-symbols-outlined" style="color: var(--primary);">sync_saved_locally</span>
-          پایداری داده و خروجی / ورودی
-        </div>
+        پایداری داده و خروجی / ورودی
+      </div>
 <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.6;">
-          اطلاعات به طور خودکار در مرورگر ذخیره می‌شوند. برای جابجایی بین گوشی‌ها فایل بکاپ دانلود کنید.
-        </p>
+        اطلاعات شما در مرورگر به صورت دائمی نگهداری می‌شود. با دکمه‌های زیر می‌توانید خروجی پشتیبان بگیرید یا در گوشی دیگر بازیابی نمایید:
+      </p>
 <div style="display: flex; gap: 10px;">
-<button class="main-action-btn" onclick="exportJSONBackup()" style="margin-top: 0; background: rgba(34, 197, 94, 0.15); color: var(--primary); border: 1px solid var(--primary);">
+<button class="main-action-btn" onclick="exportJSONBackup()" style="margin-top: 0; background: rgba(34, 197, 94, 0.15); color: var(--primary); border: 1px solid var(--primary); flex: 1;">
 <span class="material-symbols-outlined">download</span>
-            دانلود بکاپ (JSON)
-          </button>
-<label class="main-action-btn" style="margin-top: 0; background: rgba(255, 255, 255, 0.05); color: var(--text); border: 1px solid var(--surface-border); cursor: pointer;">
+          دانلود فایل بکاپ
+        </button>
+<label class="main-action-btn" style="margin-top: 0; background: rgba(255, 255, 255, 0.05); color: var(--text); border: 1px solid var(--surface-border); cursor: pointer; flex: 1;">
 <span class="material-symbols-outlined">upload</span>
-            بازیابی
-            <input accept=".json" onchange="importJSONBackup(event)" style="display: none;" type="file"/>
+          بازیابی اطلاعات
+          <input accept=".json" onchange="importJSONBackup(event)" style="display: none;" type="file"/>
 </label>
 </div>
 </div>
 </main>
 <!-- تب بار پایین -->
 <nav class="bottom-nav">
-<button class="nav-item active" onclick="switchTab('workout', this)">
+<button class="nav-item active" id="bnav-workout" onclick="switchTab('workout')">
 <span class="material-symbols-outlined icon">fitness_center</span>
 <span class="label">تمرین</span>
 </button>
-<button class="nav-item" onclick="switchTab('nutrition', this)">
+<button class="nav-item" id="bnav-nutrition" onclick="switchTab('nutrition')">
 <span class="material-symbols-outlined icon">nutrition</span>
 <span class="label">تغذیه</span>
 </button>
-<button class="nav-item" onclick="switchTab('lab', this)">
+<button class="nav-item" id="bnav-lab" onclick="switchTab('lab')">
 <span class="material-symbols-outlined icon">vital_signs</span>
 <span class="label">آزمایشگاه</span>
 </button>
-<button class="nav-item" onclick="switchTab('gamification', this)">
+<button class="nav-item" id="bnav-gamification" onclick="switchTab('gamification')">
 <span class="material-symbols-outlined icon">military_tech</span>
 <span class="label">انگیزشی</span>
 </button>
-<button class="nav-item" onclick="switchTab('tools', this)">
+<button class="nav-item" id="bnav-tools" onclick="switchTab('tools')">
 <span class="material-symbols-outlined icon">tune</span>
 <span class="label">امکانات</span>
 </button>
 </nav>
+<!-- مودال ساخت / ویرایش حرکت تمرینی -->
+<div class="modal-overlay" id="exercise-modal" onclick="onModalBackdropClick(event)">
+<div class="modal-sheet" onclick="event.stopPropagation()">
+<div class="modal-header">
+<div style="display: flex; align-items: center; gap: 8px;">
+<span class="material-symbols-outlined" style="color: var(--primary);">edit_note</span>
+<h3 id="modal-exercise-title" style="font-size: 1.05rem; font-weight: 800;">ساخت / ویرایش حرکت تمرینی</h3>
 </div>
-<!-- لاجیک برنامه (Vanilla JS) -->
+<button onclick="closeExerciseModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center;">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<input id="modal-exercise-id" type="hidden" value=""/>
+<div class="form-group">
+<label class="form-label" for="form-exercise-name">نام حرکت تمرینی</label>
+<input class="form-input" id="form-exercise-name" placeholder="مثلاً: پرس سینه هالتر، اسکوات پا، لت دست باز" type="text"/>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+<div class="form-group">
+<label class="form-label" for="form-target-muscle">عضله هدف</label>
+<select class="form-select" id="form-target-muscle">
+<option value="سینه">سینه</option>
+<option value="زیربغل و پشت">زیربغل و پشت</option>
+<option value="سرشانه و کول">سرشانه و کول</option>
+<option value="چهارسر و پا">چهارسر و پا</option>
+<option value="جلو بازو و پشت بازو">جلو بازو و پشت بازو</option>
+<option value="شکم و میان‌تنه">شکم و میان‌تنه</option>
+<option value="فول‌بادی / هوازی">فول‌بادی / هوازی</option>
+</select>
+</div>
+<div class="form-group">
+<label class="form-label" for="form-exercise-type">نوع حرکت</label>
+<select class="form-select" id="form-exercise-type">
+<option value="main">حرکت اصلی</option>
+<option value="aux">حرکت کمکی / تکمیلی</option>
+</select>
+</div>
+</div>
+<div class="form-group" id="sets-count-container">
+<label class="form-label" for="form-sets-count">تعداد ست‌های اولیه</label>
+<input class="form-input" id="form-sets-count" max="10" min="1" placeholder="۴" type="number" value="3"/>
+</div>
+<div style="display: flex; gap: 10px; margin-top: 18px;">
+<button class="main-action-btn" onclick="saveExerciseModal()" style="margin-top: 0; flex: 2;">
+<span class="material-symbols-outlined">save</span>
+        ذخیره حرکت
+      </button>
+<button class="timer-btn" onclick="closeExerciseModal()" style="flex: 1; padding: 12px;">
+        انصراف
+      </button>
+</div>
+</div>
+</div>
+<!-- پیغام پاپ‌آپ موقت (Toast) -->
+<div id="toast-msg">
+<span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">check_circle</span>
+<span id="toast-text">عملیات انجام شد</span>
+</div>
+</div>
+<!-- جاوااسکریپت و لاجیک کامل اپلیکیشن -->
 <script>
-    const STORAGE_KEY = 'vesta_fitness_state_v1';
+  const STORAGE_KEY = 'vesta_fitness_state_v3';
 
-    let appState = {
-      user: { name: 'قهرمان', streak: 12, xp: 3450, level: 14 },
-      workout: [
-        { id: 'ex_1_s1', set: 1, weight: 75, reps: 10, done: true },
-        { id: 'ex_1_s2', set: 2, weight: 80, reps: 8, done: true },
-        { id: 'ex_1_s3', set: 3, weight: 82.5, reps: 8, done: false },
-        { id: 'ex_1_s4', set: 4, weight: 80, reps: 8, done: false }
-      ],
-      nutrition: { consumedWater: 6, maxWater: 8 },
-      biometrics: { weight: 76.4, bodyFat: 14.2 }
-    };
-
-    function initApp() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try { appState = JSON.parse(saved); } catch (e) { console.error(e); }
+  // ساختار بهینه‌شده داده با آرایه کامل حرکات تمرینی
+  let appState = {
+    user: { name: 'قهرمان', streak: 12, xp: 3450, level: 14 },
+    exercises: [
+      {
+        id: 'ex_1',
+        title: 'پرس سینه هالتر',
+        targetMuscle: 'سینه',
+        isMain: true,
+        sets: [
+          { set: 1, weight: 75, reps: 10, done: true },
+          { set: 2, weight: 80, reps: 8, done: true },
+          { set: 3, weight: 82.5, reps: 8, done: false },
+          { set: 4, weight: 80, reps: 8, done: false }
+        ]
+      },
+      {
+        id: 'ex_2',
+        title: 'بالاسینه دمبل موازی',
+        targetMuscle: 'سینه',
+        isMain: false,
+        sets: [
+          { set: 1, weight: 24, reps: 12, done: true },
+          { set: 2, weight: 24, reps: 10, done: false },
+          { set: 3, weight: 26, reps: 8, done: false }
+        ]
       }
-      renderWorkoutSets();
-      renderWaterCups();
-      calc1RM();
+    ],
+    nutrition: { consumedWater: 6, maxWater: 8, remainingCalories: 350 },
+    biometrics: { weight: 76.4, bodyFat: 14.2 }
+  };
+
+  function initApp() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // مهاجرت از ساختار قبلی (workout به عنوان آرایه ست) به ساختار جدید exercises
+        if (parsed.workout && !parsed.exercises) {
+          parsed.exercises = [
+            {
+              id: 'ex_legacy_1',
+              title: 'پرس سینه هالتر',
+              targetMuscle: 'سینه',
+              isMain: true,
+              sets: parsed.workout
+            }
+          ];
+          delete parsed.workout;
+        }
+        appState = Object.assign(appState, parsed);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    renderExercises();
+    renderWaterCups();
+    calc1RM();
+    updateUIFromState();
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+  }
+
+  function updateUIFromState() {
+    document.getElementById('streak-counter').innerText = `${appState.user.streak} روز استمرار`;
+    document.getElementById('lab-weight-display').innerHTML = `${appState.biometrics.weight} <span style="font-size: 0.75rem; font-family: 'Vazirmatn';">کیلوگرم</span>`;
+    document.getElementById('lab-fat-display').innerText = `${appState.biometrics.bodyFat}٪`;
+    document.getElementById('xp-text').innerText = `${appState.user.xp.toLocaleString()} / ۴,۰۰۰ XP`;
+    const pct = Math.min(100, Math.round((appState.user.xp / 4000) * 100));
+    document.getElementById('xp-bar').style.width = pct + '%';
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast-msg');
+    document.getElementById('toast-text').innerText = msg;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2400);
+  }
+
+  // سوییچ تب‌ها
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    const targetContent = document.getElementById('tab-' + tabId);
+    if (targetContent) targetContent.classList.add('active');
+
+    document.querySelectorAll('.bottom-nav .nav-item').forEach(item => item.classList.remove('active'));
+    const bottomNavBtn = document.getElementById('bnav-' + tabId);
+    if (bottomNavBtn) bottomNavBtn.classList.add('active');
+
+    document.querySelectorAll('.quick-tab-chip').forEach(chip => chip.classList.remove('active'));
+    const quickChip = document.getElementById('qtab-' + tabId);
+    if (quickChip) quickChip.classList.add('active');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // بخش رندرینگ کامل حرکات تمرینی
+  function renderExercises() {
+    const wrapper = document.getElementById('exercises-list-wrapper');
+    if (!appState.exercises || appState.exercises.length === 0) {
+      wrapper.innerHTML = `
+        <div class="card" style="text-align: center; padding: 28px 16px; color: var(--text-muted);">
+          <span class="material-symbols-outlined" style="font-size: 42px; opacity: 0.4;">fitness_center</span>
+          <div style="margin-top: 8px; font-weight: 700;">هیچ حرکتی در برنامه شما ثبت نشده است</div>
+          <div style="font-size: 0.78rem; margin-top: 4px;">با زدن دکمه بالای صفحه اولین حرکت را اضافه کنید.</div>
+        </div>
+      `;
+      return;
     }
 
-    function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-    }
+    wrapper.innerHTML = appState.exercises.map((exercise, exIndex) => {
+      const isMain = exercise.isMain;
+      const badgeClass = isMain 
+        ? 'color: var(--primary); background: rgba(34, 197, 94, 0.12);'
+        : 'color: var(--accent-blue); background: rgba(56, 189, 248, 0.12);';
+      const badgeText = isMain ? 'اصلی' : 'کمکی';
+      const iconColor = isMain ? 'var(--primary)' : 'var(--accent-blue)';
 
-    function switchTab(tabId, el) {
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-      document.getElementById('tab-' + tabId).classList.add('active');
-      el.classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function renderWorkoutSets() {
-      const container = document.getElementById('exercise-sets-container');
-      container.innerHTML = appState.workout.map((item, index) => `
+      const setsHtml = exercise.sets.map((setObj, setIndex) => `
         <div class="set-row">
-          <div style="font-weight: 700; font-size: 0.85rem; color: var(--text-muted); text-align: center;">${item.set}</div>
-          <div><input type="number" step="0.5" class="set-input" value="${item.weight}" onchange="updateSetData(${index}, 'weight', this.value)" /></div>
-          <div><input type="number" class="set-input" value="${item.reps}" onchange="updateSetData(${index}, 'reps', this.value)" /></div>
+          <div style="font-weight: 800; font-size: 0.85rem; color: var(--text-muted); text-align: center; font-family: 'Plus Jakarta Sans';">${setObj.set}</div>
           <div>
-            <button class="check-btn ${item.done ? 'checked' : ''}" onclick="toggleSetDone(${index})">
+            <input type="number" step="0.5" class="set-input" value="${setObj.weight}" onchange="updateExerciseSetData(${exIndex}, ${setIndex}, 'weight', this.value)" />
+          </div>
+          <div>
+            <input type="number" class="set-input" value="${setObj.reps}" onchange="updateExerciseSetData(${exIndex}, ${setIndex}, 'reps', this.value)" />
+          </div>
+          <div>
+            <button class="check-btn ${setObj.done ? 'checked' : ''}" onclick="toggleExerciseSetDone(${exIndex}, ${setIndex})">
               <span class="material-symbols-outlined" style="font-size: 20px;">check</span>
             </button>
           </div>
         </div>
       `).join('');
-    }
 
-    function updateSetData(index, field, val) {
-      appState.workout[index][field] = parseFloat(val) || 0;
+      return `
+        <div class="card" id="exercise-card-${exercise.id}">
+          <div class="card-title" style="justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span class="material-symbols-outlined" style="color: ${iconColor};">fitness_center</span>
+              <span style="font-size: 0.98rem; font-weight: 800;">${exercise.title}</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">(${exercise.sets.length} ست)</span>
+              <span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 6px; font-weight: 700; ${badgeClass}">
+                ${badgeText} • ${exercise.targetMuscle || 'بدن'}
+              </span>
+            </div>
+
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <button class="action-icon-btn edit-btn" title="ویرایش حرکت" onclick="openExerciseModal('${exercise.id}')">
+                <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+              </button>
+              <button class="action-icon-btn delete-btn" title="حذف حرکت" onclick="confirmDeleteExercise(${exIndex})">
+                <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+              </button>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 32px 1fr 1fr 40px; gap: 8px; font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-bottom: 8px; padding: 0 2px;">
+            <div>ست</div>
+            <div>وزنه (kg)</div>
+            <div>تکرار</div>
+            <div>تایید</div>
+          </div>
+
+          <div>${setsHtml}</div>
+
+          <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <button class="timer-btn" onclick="addSetToExercise(${exIndex})" style="flex: 1; padding: 9px;">
+              + افزودن ست جدید
+            </button>
+            <button class="timer-btn" onclick="removeLastSetFromExercise(${exIndex})" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.3); padding: 9px 12px;">
+              حذف ست
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // مدیریت ست‌های هر حرکت
+  function updateExerciseSetData(exIndex, setIndex, field, val) {
+    if (appState.exercises[exIndex] && appState.exercises[exIndex].sets[setIndex]) {
+      appState.exercises[exIndex].sets[setIndex][field] = parseFloat(val) || 0;
       saveState();
     }
+  }
 
-    function toggleSetDone(index) {
-      appState.workout[index].done = !appState.workout[index].done;
+  function toggleExerciseSetDone(exIndex, setIndex) {
+    const exercise = appState.exercises[exIndex];
+    if (!exercise || !exercise.sets[setIndex]) return;
+
+    exercise.sets[setIndex].done = !exercise.sets[setIndex].done;
+    saveState();
+    renderExercises();
+
+    if (exercise.sets[setIndex].done) {
+      showToast(`ست ${setIndex + 1} از «${exercise.title}» ثبت شد!`);
+      startRestTimer(60);
+    }
+  }
+
+  function addSetToExercise(exIndex) {
+    const exercise = appState.exercises[exIndex];
+    if (!exercise) return;
+    const lastSet = exercise.sets[exercise.sets.length - 1];
+    exercise.sets.push({
+      set: exercise.sets.length + 1,
+      weight: lastSet ? lastSet.weight : 70,
+      reps: lastSet ? lastSet.reps : 10,
+      done: false
+    });
+    saveState();
+    renderExercises();
+    showToast(`ست جدید به «${exercise.title}» اضافه شد`);
+  }
+
+  function removeLastSetFromExercise(exIndex) {
+    const exercise = appState.exercises[exIndex];
+    if (!exercise) return;
+    if (exercise.sets.length <= 1) {
+      showToast('حداقل یک ست باید برای حرکت باقی بماند');
+      return;
+    }
+    exercise.sets.pop();
+    saveState();
+    renderExercises();
+    showToast('آخرین ست حذف شد');
+  }
+
+  function confirmDeleteExercise(exIndex) {
+    const exercise = appState.exercises[exIndex];
+    if (!exercise) return;
+    if (confirm(`آیا از حذف حرکت «${exercise.title}» مطمئن هستید؟`)) {
+      appState.exercises.splice(exIndex, 1);
       saveState();
-      renderWorkoutSets();
-      if (appState.workout[index].done) {
-        startRestTimer(60);
+      renderExercises();
+      showToast('حرکت تمرینی حذف شد');
+    }
+  }
+
+  // مودال ایجاد / ویرایش حرکت تمرینی
+  function openExerciseModal(exerciseId = null) {
+    const modal = document.getElementById('exercise-modal');
+    const modalTitle = document.getElementById('modal-exercise-title');
+    const idField = document.getElementById('modal-exercise-id');
+    const nameInput = document.getElementById('form-exercise-name');
+    const muscleSelect = document.getElementById('form-target-muscle');
+    const typeSelect = document.getElementById('form-exercise-type');
+    const setsContainer = document.getElementById('sets-count-container');
+    const setsInput = document.getElementById('form-sets-count');
+
+    if (exerciseId) {
+      // حالت ویرایش حرکت موجود
+      const targetEx = appState.exercises.find(e => e.id === exerciseId);
+      if (!targetEx) return;
+
+      modalTitle.innerText = 'ویرایش حرکت تمرینی';
+      idField.value = targetEx.id;
+      nameInput.value = targetEx.title;
+      muscleSelect.value = targetEx.targetMuscle || 'سینه';
+      typeSelect.value = targetEx.isMain ? 'main' : 'aux';
+      setsContainer.style.display = 'none'; // در ویرایش تعداد ست‌ها مستقیماً در کارت تنظیم می‌شود
+    } else {
+      // حالت ایجاد حرکت جدید
+      modalTitle.innerText = 'افزودن حرکت جدید به تمرین';
+      idField.value = '';
+      nameInput.value = '';
+      muscleSelect.value = 'سینه';
+      typeSelect.value = 'main';
+      setsContainer.style.display = 'block';
+      setsInput.value = '3';
+    }
+
+    modal.classList.add('active');
+    setTimeout(() => nameInput.focus(), 150);
+  }
+
+  function closeExerciseModal() {
+    const modal = document.getElementById('exercise-modal');
+    modal.classList.remove('active');
+  }
+
+  function onModalBackdropClick(event) {
+    if (event.target.id === 'exercise-modal') {
+      closeExerciseModal();
+    }
+  }
+
+  function saveExerciseModal() {
+    const idField = document.getElementById('modal-exercise-id');
+    const nameInput = document.getElementById('form-exercise-name');
+    const muscleSelect = document.getElementById('form-target-muscle');
+    const typeSelect = document.getElementById('form-exercise-type');
+    const setsInput = document.getElementById('form-sets-count');
+
+    const title = nameInput.value.trim();
+    if (!title) {
+      showToast('لطفاً عنوان حرکت تمرینی را وارد کنید');
+      nameInput.focus();
+      return;
+    }
+
+    const targetMuscle = muscleSelect.value;
+    const isMain = typeSelect.value === 'main';
+
+    if (idField.value) {
+      // ویرایش
+      const targetEx = appState.exercises.find(e => e.id === idField.value);
+      if (targetEx) {
+        targetEx.title = title;
+        targetEx.targetMuscle = targetMuscle;
+        targetEx.isMain = isMain;
+        saveState();
+        renderExercises();
+        showToast('حرکت تمرینی با موفقیت به‌روزرسانی شد');
       }
-    }
+    } else {
+      // ایجاد حرکت تازه
+      const setsCount = Math.max(1, Math.min(10, parseInt(setsInput.value) || 3));
+      const newSets = [];
+      for (let s = 1; s <= setsCount; s++) {
+        newSets.push({
+          set: s,
+          weight: 60,
+          reps: 10,
+          done: false
+        });
+      }
 
-    function addNewSet() {
-      const last = appState.workout[appState.workout.length - 1];
-      appState.workout.push({
-        id: 'ex_1_s' + (appState.workout.length + 1),
-        set: appState.workout.length + 1,
-        weight: last ? last.weight : 50,
-        reps: last ? last.reps : 10,
-        done: false
-      });
+      const newExercise = {
+        id: 'ex_' + Date.now(),
+        title: title,
+        targetMuscle: targetMuscle,
+        isMain: isMain,
+        sets: newSets
+      };
+
+      appState.exercises.push(newExercise);
       saveState();
-      renderWorkoutSets();
+      renderExercises();
+      showToast(`حرکت «${title}» افزوده شد`);
     }
 
-    let timerInterval = null;
-    let remainingSeconds = 60;
-    let timerRunning = false;
+    closeExerciseModal();
+  }
 
-    function adjustTimer(sec) {
-      remainingSeconds = Math.max(0, remainingSeconds + sec);
-      document.getElementById('timer-display').innerText = remainingSeconds + 's';
+  // تایمر استراحت
+  let timerInterval = null;
+  let remainingSeconds = 60;
+  let timerRunning = false;
+
+  function adjustTimer(sec) {
+    remainingSeconds = Math.max(0, remainingSeconds + sec);
+    document.getElementById('timer-display').innerText = remainingSeconds + 's';
+  }
+
+  function toggleTimer() {
+    if (timerRunning) {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      document.getElementById('timer-toggle-btn').innerText = 'شروع';
+      showToast('تایمر متوقف شد');
+    } else {
+      startRestTimer(remainingSeconds > 0 ? remainingSeconds : 60);
     }
+  }
 
-    function toggleTimer() {
-      if (timerRunning) {
+  function startRestTimer(seconds) {
+    clearInterval(timerInterval);
+    remainingSeconds = seconds;
+    timerRunning = true;
+    document.getElementById('timer-toggle-btn').innerText = 'توقف';
+    document.getElementById('timer-display').innerText = seconds + 's';
+
+    const endTime = Date.now() + seconds * 1000;
+    timerInterval = setInterval(() => {
+      const left = Math.round((endTime - Date.now()) / 1000);
+      if (left <= 0) {
         clearInterval(timerInterval);
         timerRunning = false;
+        remainingSeconds = 60;
+        document.getElementById('timer-display').innerText = '60s';
         document.getElementById('timer-toggle-btn').innerText = 'شروع';
+        showToast('زمان استراحت پایان یافت! ست بعدی را شروع کنید.');
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
       } else {
-        startRestTimer(remainingSeconds);
+        remainingSeconds = left;
+        document.getElementById('timer-display').innerText = left + 's';
       }
+    }, 400);
+  }
+
+  function finishWorkoutSession() {
+    appState.user.streak += 1;
+    appState.user.xp += 250;
+    saveState();
+    updateUIFromState();
+    showToast('جلسه تمرینی تکمیل و ذخیره شد! (+۲۵۰ XP)');
+  }
+
+  // تغذیه و آب
+  function renderWaterCups() {
+    const box = document.getElementById('water-cups-box');
+    box.innerHTML = '';
+    for (let i = 1; i <= 8; i++) {
+      const isFilled = i <= appState.nutrition.consumedWater;
+      box.innerHTML += `
+        <div class="water-cup ${isFilled ? 'filled' : ''}" onclick="setWater(${i})">
+          <span class="material-symbols-outlined" style="font-size: 16px;">water_drop</span>
+          <span>${i * 250}</span>
+        </div>
+      `;
     }
+    document.getElementById('water-stat').innerText = `${appState.nutrition.consumedWater * 250} / 2000 ml`;
+  }
 
-    function startRestTimer(seconds) {
-      clearInterval(timerInterval);
-      remainingSeconds = seconds;
-      timerRunning = true;
-      document.getElementById('timer-toggle-btn').innerText = 'توقف';
-      const endTime = Date.now() + seconds * 1000;
+  function setWater(cupIndex) {
+    appState.nutrition.consumedWater = cupIndex;
+    saveState();
+    renderWaterCups();
+    showToast(`${cupIndex * 250} میلی‌لیتر آب ثبت شد`);
+  }
 
-      timerInterval = setInterval(() => {
-        const left = Math.round((endTime - Date.now()) / 1000);
-        if (left <= 0) {
-          clearInterval(timerInterval);
-          timerRunning = false;
-          remainingSeconds = 60;
-          document.getElementById('timer-display').innerText = '60s';
-          document.getElementById('timer-toggle-btn').innerText = 'شروع';
-          if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-        } else {
-          remainingSeconds = left;
-          document.getElementById('timer-display').innerText = left + 's';
-        }
-      }, 500);
+  function addWaterCup(num) {
+    appState.nutrition.consumedWater = Math.min(8, appState.nutrition.consumedWater + num);
+    saveState();
+    renderWaterCups();
+    showToast('یک لیوان آب اضافه شد');
+  }
+
+  function resetWater() {
+    appState.nutrition.consumedWater = 0;
+    saveState();
+    renderWaterCups();
+    showToast('ردیاب آب ریست شد');
+  }
+
+  function addQuickMeal() {
+    const nameInput = document.getElementById('quick-meal-name');
+    const calInput = document.getElementById('quick-meal-cal');
+    const calVal = parseInt(calInput.value) || 0;
+    if (calVal > 0) {
+      appState.nutrition.remainingCalories = Math.max(0, (appState.nutrition.remainingCalories || 350) - calVal);
+      document.getElementById('cal-remaining').innerText = appState.nutrition.remainingCalories;
+      showToast(`وعده غذایی (${calVal} کالری) ثبت گردید`);
+      nameInput.value = '';
+      calInput.value = '';
+    } else {
+      showToast('لطفا مقدار کالری را وارد کنید');
     }
+  }
 
-    function renderWaterCups() {
-      const box = document.getElementById('water-cups-box');
-      box.innerHTML = '';
-      for (let i = 1; i <= 8; i++) {
-        const isFilled = i <= appState.nutrition.consumedWater;
-        box.innerHTML += `
-          <div class="water-cup ${isFilled ? 'filled' : ''}" onclick="setWater(${i})">
-            ${i * 250}
-          </div>
-        `;
-      }
-      document.getElementById('water-stat').innerText = `${appState.nutrition.consumedWater * 250} / 2000 ml`;
-    }
-
-    function setWater(cupIndex) {
-      appState.nutrition.consumedWater = cupIndex;
+  // آزمایشگاه بیومتریک
+  function updateCurrentWeight() {
+    const input = document.getElementById('new-weight-input');
+    const val = parseFloat(input.value);
+    if (val && val > 30 && val < 250) {
+      appState.biometrics.weight = val;
       saveState();
-      renderWaterCups();
+      updateUIFromState();
+      input.value = '';
+      showToast(`وزن جدید (${val} kg) با موفقیت ثبت شد`);
+    } else {
+      showToast('لطفاً عددی معتبر برای وزن وارد فرمایید');
     }
+  }
 
-    function calc1RM() {
-      const w = parseFloat(document.getElementById('orm-weight').value) || 0;
-      const r = parseFloat(document.getElementById('orm-reps').value) || 1;
-      const orm = Math.round(w * (1 + r / 30));
-      document.getElementById('orm-result').innerText = orm + ' کیلوگرم';
+  // گیمیفیکیشن و استمرار
+  function addStreak() {
+    appState.user.streak += 1;
+    saveState();
+    updateUIFromState();
+    showToast(`روز استمرار به ${appState.user.streak} افزایش یافت!🔥`);
+  }
+
+  function claimDailyXP() {
+    appState.user.xp += 100;
+    saveState();
+    updateUIFromState();
+    showToast('۱۰۰ امتیاز پاداش روزانه به حسابتان افزوده شد!');
+  }
+
+  // ابزارها: محاسبه ۱RM
+  function calc1RM() {
+    const w = parseFloat(document.getElementById('orm-weight').value) || 0;
+    const r = parseFloat(document.getElementById('orm-reps').value) || 1;
+    const orm = Math.round(w * (1 + r / 30));
+    document.getElementById('orm-result').innerText = orm + ' کیلوگرم';
+  }
+
+  // ابزارها: پلیر صوتی شبیه‌سازی شده
+  let audioPlaying = false;
+  let audioProgress = 45;
+  let audioTimer = null;
+
+  function togglePlayAudio() {
+    const icon = document.getElementById('play-pause-icon');
+    audioPlaying = !audioPlaying;
+    if (audioPlaying) {
+      icon.innerText = 'pause_circle';
+      showToast('در حال پخش موزیک تمرین...');
+      audioTimer = setInterval(() => {
+        audioProgress = (audioProgress + 1) % 100;
+        document.getElementById('audio-progress').style.width = audioProgress + '%';
+      }, 800);
+    } else {
+      icon.innerText = 'play_circle';
+      clearInterval(audioTimer);
+      showToast('موزیک متوقف شد');
     }
+  }
 
-    function exportJSONBackup() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `gym_pro_backup_${new Date().toISOString().slice(0,10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    }
+  function seekAudioBar(e) {
+    const bar = document.getElementById('player-track');
+    const rect = bar.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const percent = Math.max(0, Math.min(100, Math.round((clickX / rect.width) * 100)));
+    audioProgress = percent;
+    document.getElementById('audio-progress').style.width = percent + '%';
+    showToast(`موقعیت موزیک: ${percent}٪`);
+  }
 
-    function importJSONBackup(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const imported = JSON.parse(e.target.result);
-          if (imported && imported.workout) {
-            appState = imported;
-            saveState();
-            initApp();
-            alert('اطلاعات با موفقیت بازیابی شد.');
-          } else {
-            alert('فایل وارد شده ساختار معتبری ندارد.');
+  // بکاپ و ریستور JSON
+  function exportJSONBackup() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `gym_pro_backup_${new Date().toISOString().slice(0,10)}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    showToast('فایل پشتیبان JSON دانلود شد');
+  }
+
+  function importJSONBackup(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (imported && (imported.exercises || imported.workout || imported.user)) {
+          if (imported.workout && !imported.exercises) {
+            imported.exercises = [{
+              id: 'ex_imported_1',
+              title: 'حرکت وارد شده',
+              targetMuscle: 'سینه',
+              isMain: true,
+              sets: imported.workout
+            }];
           }
-        } catch (err) {
-          alert('خطا در خواندن فایل JSON.');
+          appState = imported;
+          saveState();
+          initApp();
+          showToast('اطلاعات با موفقیت از فایل بازیابی شد!');
+        } else {
+          showToast('فایل انتخاب شده ساختار معتبری ندارد.');
         }
-      };
-      reader.readAsText(file);
-    }
+      } catch (err) {
+        showToast('خطا در پردازش فایل پشتیبان JSON.');
+      }
+    };
+    reader.readAsText(file);
+  }
 
-    // دانلود خود فایل index.html
-    function downloadSelfAsHTML() {
-      const fullHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-      const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'index.html';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    function finishWorkoutSession() {
-      alert('جلسه تمرینی شما با موفقیت ذخیره شد و به استمرار شما افزوده گردید!');
-    }
-
-    window.onload = initApp;
-  </script>
-</body>
-</html>
+  window.onload = initApp;
+</script>
+</body></html>
