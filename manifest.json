@@ -1,6 +1,6 @@
 {
-  "name": "Gym Pro Workout Tracker",
-  "short_name": "GymPro",
+  "name": "Gym Power",
+  "short_name": "Gym Power",
   "description": "Smart Fitness and Workout Planner",
   "start_url": "./index.html",
   "scope": "./",
@@ -12,16 +12,16 @@
   "dir": "rtl",
   "icons": [
     {
-      "src": "https://img.icons8.com/fluency/192/barbell.png",
+      "src": "https://img.icons8.com/color/192/barbell.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "https://img.icons8.com/fluency/512/barbell.png",
+      "src": "https://img.icons8.com/color/512/barbell.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }
